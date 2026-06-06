@@ -1,10 +1,34 @@
 services:
+  # Personal Bot (Go Fiber)
+  personal_bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: personal-bot
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - waha
+    networks:
+      - bot-network
+
+  # WAHA (WhatsApp HTTP API)
   waha:
     image: devlikeapro/waha
-    restart: always
+    container_name: waha-whatsapp
     ports:
       - "3000:3000"
     volumes:
       - ./.sessions:/app/.sessions
     env_file:
       - .env
+    restart: unless-stopped
+    networks:
+      - bot-network
+
+networks:
+  bot-network:
+    driver: bridge
