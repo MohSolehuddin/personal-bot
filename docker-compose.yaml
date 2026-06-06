@@ -1,0 +1,10 @@
+services:
+  waha:
+    image: devlikeapro/waha
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./.sessions:/app/.sessions
+    env_file:
+      - .env
