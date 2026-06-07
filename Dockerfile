@@ -28,6 +28,9 @@ RUN apk --no-cache add ca-certificates
 # Copy binary
 COPY --from=builder /app/bot .
 
+# Copy .env file
+COPY .env .env
+
 # Expose port
 EXPOSE 3001
 

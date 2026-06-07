@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  # Caddy reverse proxy for WAHA
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    ports:
+      - "3008:80"
+    volumes:
+      - ./caddy-data:/data
+      - ./waha-proxy.conf:/etc/caddy/caddy.conf:ro
+    restart: unless-stopped

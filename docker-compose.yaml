@@ -1,4 +1,20 @@
+version: '3.8'
+
 services:
+  # WAHA (WhatsApp HTTP API) - Only accessible internally
+  waha:
+    image: devlikeapro/waha
+    container_name: waha-personal-bot
+    env_file:
+      - waha.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./.sessions:/app/.sessions
+    restart: unless-stopped
+    networks:
+      - default
+
   # Personal Bot (Go Fiber)
   personal_bot:
     build:
@@ -6,29 +22,29 @@ services:
       dockerfile: Dockerfile
     container_name: personal-bot
     ports:
-      - "3001:3001"
+      - "3009:3001"
     env_file:
       - .env
     restart: unless-stopped
     depends_on:
       - waha
     networks:
-      - bot-network
+      - default
 
-  # WAHA (WhatsApp HTTP API)
-  waha:
-    image: devlikeapro/waha
-    container_name: waha-whatsapp
+  # Caddy reverse proxy for WAHA (accessible from outside)
+  caddy:
+    image: caddy:latest
+    container_name: waha-caddy
     ports:
-      - "3000:3000"
+      - "3008:80"
     volumes:
-      - ./.sessions:/app/.sessions
-    env_file:
-      - .env
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
     restart: unless-stopped
+    depends_on:
+      - waha
     networks:
-      - bot-network
+      - default
 
 networks:
-  bot-network:
+  default:
     driver: bridge

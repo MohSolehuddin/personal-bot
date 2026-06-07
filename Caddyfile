@@ -1,0 +1,3 @@
+:80 {
+    reverse_proxy waha-personal-bot:3000
+}
